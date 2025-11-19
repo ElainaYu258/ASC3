@@ -755,6 +755,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\Serial.h</FilePath>
             </File>
+            <File>
+              <FileName>Trace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Trace.c</FilePath>
+            </File>
+            <File>
+              <FileName>Trace.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Trace.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -779,6 +789,16 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\User\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\control.c</FilePath>
+            </File>
+            <File>
+              <FileName>control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\User\control.h</FilePath>
             </File>
           </Files>
         </Group>

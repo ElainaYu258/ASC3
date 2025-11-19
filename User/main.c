@@ -8,12 +8,14 @@
 #include "Encoder.h"
 #include "Serial.h"
 #include "math.h"
+#include "Trace.h"
+#include "control.h"
 #include <stdlib.h>
 #include <string.h>
 uint8_t KeyNum;
 
 float Target, Actual, Out;
-float Kp=0.85, Ki=0.01, Kd=0;
+float Kp, Ki, Kd;
 float Error0, Error1, Error2,ErrorInt;
 uint8_t loc=0;
 
@@ -27,16 +29,21 @@ int main(void)
 	Serial_Init();
 	
 	Timer_Init();
-	
+	Trace_Init();
 	
 	OLED_Update();
 	
 	while (1)
 	{
 		KeyNum = Key_GetNum();
-		if (KeyNum == 1){loc=!loc;}
+		if (KeyNum == 1){		
+			loc=!loc;
+			Target=0, Actual=0, Out=0;
+		}
 		if(loc==0){
-			OLED_Printf(0, 0, OLED_8X16, "Speed Control      ");
+			OLED_Printf(0, 0, OLED_8X16, "Ready             ");
+			Kp=1.5,Ki=0.5,Kd=0;
+			
 			int speed;
 			if(Serial_RxFlag==1){
 				if (sscanf(Serial_RxPacket, "speed%%%d", &speed)==1) {
@@ -46,20 +53,14 @@ int main(void)
 			}
 		}
 		else if(loc==1){
+			OLED_Printf(0, 0, OLED_8X16, "GO!GO!GO!!!         ");
+			Trace_task();
+			Kp=0.6,Ki=0.01,Kd=0;
 			OLED_Printf(0, 0, OLED_8X16, "Location Control   ");
-
 		}
-		OLED_Printf(0, 16, OLED_8X16, "Kp:%4.2f", Kp);
-		OLED_Printf(0, 32, OLED_8X16, "Ki:%4.2f", Ki);
-		OLED_Printf(0, 48, OLED_8X16, "Kd:%4.2f", Kd);
-		
-		OLED_Printf(64, 16, OLED_8X16, "Tar:%+04.0f", Target);
-		OLED_Printf(64, 32, OLED_8X16, "Act:%+04.0f", Actual);
-		OLED_Printf(64, 48, OLED_8X16, "Out:%+04.0f", Out);
-		
+
 		OLED_Update();
 		
-		Serial_Printf("%f,%f,%f\r\n", Target, Actual, Out);
 	}
 }
 
@@ -70,52 +71,6 @@ void TIM1_UP_IRQHandler(void)
 	if (TIM_GetITStatus(TIM1, TIM_IT_Update) == SET)
 	{
 		Key_Tick();
-		
-		Count ++;
-		if(loc==0){
-			if (Count >= 20)
-			{
-				Count = 0;
-				
-				Actual = Encoder1_Get();
-				
-				Error2 = Error1;
-				Error1 = Error0;
-				Error0 = Target - Actual;
-				
-				Out += Kp * (Error0 - Error1) + Ki * Error0
-						+ Kd * (Error0 - 2 * Error1 + Error2);
-				
-				if (Out > 200) {Out = 200;}
-				if (Out < -200) {Out = -200;}
-				
-				Motor1_SetPWM(Out);
-				Motor2_SetPWM(Out);
-			}
-		}
-		else if(loc==1){
-			if (Count >= 40)
-			{
-				Count = 0;
-				
-				Actual += Encoder2_Get();
-				
-				Error1 = Error0;
-				Error0 = Target - Actual;
-				
-				float C = 1 / (0.2 * fabs(Error0) + 1);
-				
-				ErrorInt += C * Error0;
-				
-				Out = Kp * Error0 + Ki * ErrorInt + Kd * (Error0 - Error1);
-				
-				if (Out > 200) {Out = 200;}
-				if (Out < -200) {Out = -200;}
-				
-				Motor1_SetPWM(Out);
-			}
-		
-		}
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
 	}
 }

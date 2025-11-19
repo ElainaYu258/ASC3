@@ -39,5 +39,7 @@
 .\objects\main.o: .\Hardware\Serial.h
 .\objects\main.o: D:\K5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\main.o: D:\K5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\main.o: .\Hardware\Trace.h
+.\objects\main.o: User\control.h
 .\objects\main.o: D:\K5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\main.o: D:\K5\ARM\ARMCC\Bin\..\include\string.h
