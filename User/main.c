@@ -14,9 +14,12 @@
 #include <string.h>
 
 uint8_t KeyNum;
-uint16_t s=50;
-uint16_t n1=50;
-uint16_t n2=50;
+int s=50;
+int n1=50;
+int n2=50;
+int n3=50;
+int n4=50;
+int r=50;
 float Target, Actual, Out;
 float Kp, Ki, Kd;
 float Error0, Error1, Error2,ErrorInt;
@@ -40,43 +43,36 @@ int main(void)
 		KeyNum = Key_GetNum();
 
 		if(loc==0){
-			if (KeyNum == 1)ex+=1;
-			if (ex>3)ex=0;
-			if(ex==0){
-				OLED_Printf(0, 0, OLED_8X16, ">Ready             ");
-				OLED_Printf(0, 16, OLED_8X16, " s:%d", s);
-				OLED_Printf(0, 32, OLED_8X16, " n1:%d", n1);
-				OLED_Printf(0, 48, OLED_8X16, " n2:%d", n2);
-				if(KeyNum == 2)loc=!loc;
+			if (KeyNum == 1)loc=!loc;
+			if(Serial_RxFlag==1){
+				sscanf(Serial_RxPacket, "s%%%d", &s);
+				Serial_RxFlag=0;
 			}
-			if(ex==1){
-				OLED_Printf(0, 0, OLED_8X16, " Ready             ");
-				OLED_Printf(0, 16, OLED_8X16, ">s:%d", s);
-				OLED_Printf(0, 32, OLED_8X16, " n1:%d", n1);
-				OLED_Printf(0, 48, OLED_8X16, " n2:%d", n2);
-				if(KeyNum == 2)s+=10;
-				if(KeyNum == 3)s-=10;
+			else if(Serial_RxFlag==1){
+				sscanf(Serial_RxPacket, "r%%%d", &r);
+				Serial_RxFlag=0;
 			}
-			if(ex==2){
-				OLED_Printf(0, 0, OLED_8X16, " Ready             ");
-				OLED_Printf(0, 16, OLED_8X16, " s:%d", s);
-				OLED_Printf(0, 32, OLED_8X16, ">n1:%d", n1);
-				OLED_Printf(0, 48, OLED_8X16, " n2:%d", n2);
-				if(KeyNum == 2)n1+=10;
-				if(KeyNum == 3)n1-=10;
+			else if(Serial_RxFlag==1){
+				sscanf(Serial_RxPacket, "n1%%%d", &n1);
+				Serial_RxFlag=0;
 			}
-			if(ex==3){
-				OLED_Printf(0, 0, OLED_8X16, " Ready             ");
-				OLED_Printf(0, 16, OLED_8X16, " s:%d", s);
-				OLED_Printf(0, 32, OLED_8X16, " n1:%d", n1);
-				OLED_Printf(0, 48, OLED_8X16, ">n2:%d", n2);
-				if(KeyNum == 2)n2+=10;
-				if(KeyNum == 3)n2-=10;
-			}
+			else if(Serial_RxFlag==1){
+				sscanf(Serial_RxPacket, "n1%%%d", &n2);
+				Serial_RxFlag=0;
+			}	
+			else if(Serial_RxFlag==1){
+				sscanf(Serial_RxPacket, "n1%%%d", &n3);
+				Serial_RxFlag=0;
+			}	
+			else if(Serial_RxFlag==1){
+				sscanf(Serial_RxPacket, "n1%%%d", &n4);
+				Serial_RxFlag=0;
+			}				
 		}
 		else if(loc==1){
+
 			OLED_Printf(0, 0, OLED_8X16, "GO!GO!GO!!!         ");
-			Trace_task(s,n1,n2);
+			Trace_task(s,n1,n2,n3,n4,r);
 			if(KeyNum == 2)loc=!loc,ex=0;
 		}
 		OLED_Update();	
