@@ -15,11 +15,11 @@
 
 uint8_t KeyNum;
 int s=50;
-int n1=50;
-int n2=50;
-int n3=50;
-int n4=50;
-int r=50;
+int n1=60;
+int n2=40;
+int n3=60;
+int n4=60;
+int r=60;
 float Target, Actual, Out;
 float Kp, Ki, Kd;
 float Error0, Error1, Error2,ErrorInt;
@@ -37,13 +37,17 @@ int main(void)
 	Timer_Init();
 	Trace_Init();
 	OLED_Update();
+	OLED_Clear();
 	
 	while (1)
 	{
 		KeyNum = Key_GetNum();
-
+		if (KeyNum == 1)loc=!loc;
 		if(loc==0){
-			if (KeyNum == 1)loc=!loc;
+			OLED_Printf(0, 0, OLED_8X16, ">Ready      ");
+			OLED_Printf(0, 16, OLED_8X16, " speed:60     ");
+			Motor1_SetPWM(0);
+			Motor2_SetPWM(0);			
 			if(Serial_RxFlag==1){
 				sscanf(Serial_RxPacket, "s%%%d", &s);
 				Serial_RxFlag=0;
@@ -57,23 +61,23 @@ int main(void)
 				Serial_RxFlag=0;
 			}
 			else if(Serial_RxFlag==1){
-				sscanf(Serial_RxPacket, "n1%%%d", &n2);
+				sscanf(Serial_RxPacket, "n2%%%d", &n2);
 				Serial_RxFlag=0;
 			}	
 			else if(Serial_RxFlag==1){
-				sscanf(Serial_RxPacket, "n1%%%d", &n3);
+				sscanf(Serial_RxPacket, "n3%%%d", &n3);
 				Serial_RxFlag=0;
 			}	
 			else if(Serial_RxFlag==1){
-				sscanf(Serial_RxPacket, "n1%%%d", &n4);
+				sscanf(Serial_RxPacket, "n4%%%d", &n4);
 				Serial_RxFlag=0;
 			}				
 		}
 		else if(loc==1){
 
-			OLED_Printf(0, 0, OLED_8X16, "GO!GO!GO!!!         ");
+			OLED_Printf(0, 0, OLED_8X16, "GO!GO!GO!!!      ");
+			OLED_Printf(0, 16, OLED_8X16, "                ");
 			Trace_task(s,n1,n2,n3,n4,r);
-			if(KeyNum == 2)loc=!loc,ex=0;
 		}
 		OLED_Update();	
 	}
